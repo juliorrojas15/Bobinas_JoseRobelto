@@ -1,0 +1,73 @@
+<resources>
+    <string name="app_name">Bobinas_JoseRobelto</string>
+    <string name="Label">Control de Bobinas</string>
+
+    <string name="strTitulo">CONTROL DE TRASNFORMADOR</string>
+    <string name="strTiempoActual">Quedan xx minutos</string>
+    <string name="strBobinas">BOBINAS</string>
+    <string name="strOpcion_0">Apagar Todas</string>
+    <string name="strOpcion_1">Bobina 1</string>
+    <string name="strOpcion_2">Bobina 2</string>
+    <string name="strOpcion_3">Bobina 3</string>
+    <string name="strOpcion_4">Bobina 4</string>
+    <string name="strOpcion_5">Bobina 5</string>
+    <string name="strOpcion_6">Bobina 6</string>
+    <string name="strOpcion_7">Bobina 7</string>
+    <string name="strOpcion_8">Bobina 8</string>
+    <string name="strEnviarOrden">Enviar la Orden</string>
+
+    <string name="strUsuario">USUARIO</string>
+    <string name="strNumero">###</string>
+    <string name="strVolver">VOLVER</string>
+
+    <string name="strTituloClaveUsuario">Ingresa Clave de usuario</string>
+    <string name="strRespuestaClave">Clave CORRECTA</string>
+    <string name="strTituloConfirmacion">Confirmación</string>
+    <string name="strIngreseMinutos">Selecciones el tiempo en Minutos:</string>
+    <string name="strResumen">Se encenderá la bonina ## por ## minutos</string>
+    <string name="strConfirmar">CONFIRMAR</string>
+
+    <string name="strTituloClaveActual">Ingrese Clave Actual:</string>
+    <string name="strTituloNuevaClave">Digite Nueva Clave:</string>
+    <string name="strTituloConfirmarClave">Confirme Nueva Clave:</string>
+    <string name="strConfirmarClave">CONFIRMAR</string>
+
+
+
+    <style name="styOpciones">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:buttonTint">@color/black</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">15dp</item>
+
+    </style>
+
+    <style name="styTituloColumnas">
+        <item name="android:layout_width">100dp</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:background">@color/red</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">15dp</item>
+        <item name="android:textAlignment">center</item>
+        <!-- <item name="android:layout_columnWeight">1</item> -->
+    </style>
+
+    <style name="styContenidoColumnas">
+        <item name="android:layout_width">100dp</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:background">@color/beige</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">15dp</item>
+        <item name="android:textAlignment">center</item>
+        <!-- <item name="android:layout_columnWeight">1</item> -->
+    </style>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="strTituloEstadisticas">ESTADÍSTICAS</string>
+    <string name="strHoras">HORAS</string>
+    <string name="strCiclos">CICLOS</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+</resources>

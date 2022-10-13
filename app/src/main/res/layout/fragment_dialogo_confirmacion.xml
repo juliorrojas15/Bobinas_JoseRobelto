@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusableInTouchMode="true"
+    tools:context=".Dialogs.DialogoConfirmacion"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_margin="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/strTituloClaveUsuario"
+            android:textSize="20dp"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:layout_margin="10dp"
+            android:layout_marginBottom="30dp"
+            android:imeOptions="actionDone"/>
+
+        <EditText
+            android:id="@+id/etClaveUsuario"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:layout_margin="5dp"
+            android:inputType="textPassword"/>
+
+        <TextView
+            android:id="@+id/tvClaveRespuesta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/strRespuestaClave"
+            android:textSize="15dp"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:layout_margin="10dp"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/strTituloConfirmacion"
+            android:textSize="40dp"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:layout_margin="10dp"
+            android:layout_marginBottom="30dp"/>
+
+        <TextView
+            android:id="@+id/tvFraseMinutos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/strIngreseMinutos"
+            android:textSize="20dp"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:layout_margin="10dp"
+            android:layout_marginBottom="30dp"/>
+        <NumberPicker
+            android:id="@+id/npkTiempo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_weight="1"
+            android:solidColor="@color/black"
+            android:background="@color/black"
+            android:scrollbarSize="10dp"/>
+
+        <Button
+            android:id="@+id/btnConfirmar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:text="@string/strConfirmar"
+            android:backgroundTint="@color/green"
+            android:layout_marginTop="20dp"/>
+
+        <Button
+            android:id="@+id/btnVolver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:text="@string/strVolver"
+            android:backgroundTint="@color/black"
+            android:layout_marginTop="20dp"/>
+
+    </LinearLayout>
+    <!-- TODO: Update blank fragment layout -->
+
+</FrameLayout>

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "658996183498",
+    "firebase_url": "https://control-bobinas-60359-default-rtdb.firebaseio.com",
+    "project_id": "control-bobinas-60359",
+    "storage_bucket": "control-bobinas-60359.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658996183498:android:794352144389b9aff38f33",
+        "android_client_info": {
+          "package_name": "com.app.bobinas_joserobelto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "658996183498-ik1ao71ni2ui3ng1ojdn585v3e11fvbu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoWtESgfnA7hTb-Bj_EEkoCpVBC4e-Png"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "658996183498-ik1ao71ni2ui3ng1ojdn585v3e11fvbu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
