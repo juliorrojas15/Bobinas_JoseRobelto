@@ -29,6 +29,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link DialogoUsuario#newInstance} factory method to
@@ -37,12 +42,19 @@ import com.google.firebase.database.ValueEventListener;
 public class DialogoUsuario extends DialogFragment {
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference refClave = database.getReference("Clave");
+    //CollectionReference refUsuarios = database.getReference().child("Usuarios");
+    DatabaseReference refUsuarios = database.getReference("Usuarios");
 
-    EditText oetClaveActual,oetClaveNueva,oetClaveConfirmacion;
-    Button obtnConfirmar;
+    EditText oetRegistrarCedula, oetRegistrarClave,oetRegistrarConfirmar;
+    EditText oetCambiarCedula,oetCambiarClaveActual, oetCambiarClaveNueva,oetCambiarClaveConfirmar;
+
+    Button obtnRegistrar,obtnConfirmar;
     Activity Actividad;
     String sClaveActual="";
+
+    //ArrayList<String> alCedulas = new ArrayList<>();
+    //ArrayList<String> alClaves = new ArrayList<>();
+    Map<String, Object> mapUsuarios = new HashMap<>();
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -89,22 +101,39 @@ public class DialogoUsuario extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_dialogo_usuario,null);
         builder.setView(view);
 
-        oetClaveActual = view.findViewById(R.id.etClaveActual);
-        oetClaveNueva = view.findViewById(R.id.etClaveNueva);
-        oetClaveConfirmacion = view.findViewById(R.id.etClaveConfirmacion);
+        oetRegistrarCedula = view.findViewById(R.id.etRegirtrarCedula);
+        oetRegistrarClave = view.findViewById(R.id.etRegitrarClave);
+        oetRegistrarConfirmar = view.findViewById(R.id.etRegistrarConfirmar);
+
+        oetCambiarCedula = view.findViewById(R.id.etCambiarCedula);
+        oetCambiarClaveActual = view.findViewById(R.id.etCambiarClaveActual);
+        oetCambiarClaveNueva = view.findViewById(R.id.etCambiarClaveNueva);
+        oetCambiarClaveConfirmar = view.findViewById(R.id.etCambiarClaveConfirmar);
+
+        obtnRegistrar = view.findViewById(R.id.btnRegistrar);
         obtnConfirmar = view.findViewById(R.id.btnConfirmar);
 
-        refClave.addValueEventListener(new ValueEventListener() {
+
+        refUsuarios.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                sClaveActual = dataSnapshot.getValue(String.class);
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    int i = 0;
+                    for(DataSnapshot d : snapshot.getChildren()) {
+                       mapUsuarios.put(d.getKey(),d.getValue().toString());
+                       i++;
+                    }
+                    Toast.makeText(Actividad,"DAtos Obtenidos",Toast.LENGTH_SHORT).show();
+
+                }
             }
+
             @Override
-            public void onCancelled(DatabaseError error) {
-                Log.w(TAG, "Failed to read value.", error.toException());
-                Toast.makeText(Actividad,"No se comunicó a Internet",Toast.LENGTH_SHORT).show();
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
+
         eventos();
 
         return builder.create();
@@ -115,24 +144,65 @@ public class DialogoUsuario extends DialogFragment {
         obtnConfirmar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String sClaveActualIngresada = oetClaveActual.getText().toString();
+                String sCedula = oetCambiarCedula.getText().toString();
+                String sClaveActual = oetCambiarClaveActual.getText().toString();
+                String sClaveNueva = oetCambiarClaveNueva.getText().toString();
+                String sClaveConfirmar = oetCambiarClaveConfirmar.getText().toString();
 
-                if(sClaveActual.equals(sClaveActualIngresada)){
-                    if(oetClaveNueva.getText().toString().equals(oetClaveConfirmacion.getText().toString())){
-                        refClave.setValue(oetClaveNueva.getText().toString());
-                        Toast.makeText(Actividad,"Clave nueva y Clave confirmación diferentes",Toast.LENGTH_SHORT).show();
-                        dismiss();
-                    }
-                    else{
-                        Toast.makeText(Actividad,"Clave nueva y Clave confirmación diferentes",Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                }
-                else{
-                    Toast.makeText(Actividad,"Clave Actual erronea",Toast.LENGTH_SHORT).show();
+                if (sCedula.isEmpty() || sClaveActual.isEmpty() || sClaveNueva.isEmpty() || sClaveConfirmar.isEmpty()){
+                    Toast.makeText(Actividad,"Faltan datos por ingresar",Toast.LENGTH_SHORT).show();
                     return;
                 }
 
+                if (!mapUsuarios.containsKey(sCedula)){
+                    Toast.makeText(Actividad,"Este Usuario NO EXISTE",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (!mapUsuarios.get(sCedula).equals(sClaveActual)){
+                    Toast.makeText(Actividad,"La clave de usuario NO CORRESPONDE",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (sClaveNueva.equals(sClaveConfirmar)){
+                    Toast.makeText(Actividad,"Clave nueva y Clave de confirmación diferentes",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                refUsuarios.setValue(sCedula,sClaveNueva);
+                Toast.makeText(Actividad,"Clave de Usuario creada satisfactoriamente",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        Map<String, Object> mapNuevoUsuario = new HashMap<>();
+        obtnRegistrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String sCedula = oetRegistrarCedula.getText().toString();
+                String sClaveNueva = oetRegistrarClave.getText().toString();
+                String sClaveConfirmar = oetRegistrarConfirmar.getText().toString();
+
+                if (sCedula.isEmpty() || sClaveNueva.isEmpty() || sClaveConfirmar.isEmpty()){
+                    Toast.makeText(Actividad,"Faltan datos por ingresar",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (mapUsuarios.containsKey(sCedula)){
+                    Toast.makeText(Actividad,"Este Usuario ya existe",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(sClaveNueva.equals(sClaveConfirmar)){
+                    mapNuevoUsuario.put(sCedula,sClaveNueva);
+                    refUsuarios.updateChildren(mapNuevoUsuario);
+                    Toast.makeText(Actividad,"Usuario Registrado Satisfactoriamente",Toast.LENGTH_SHORT).show();
+                    dismiss();
+                }
+                else{
+                    Toast.makeText(Actividad,"Clave nueva y Clave de confirmación diferentes",Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
         });
 
