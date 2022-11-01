@@ -42,7 +42,6 @@ import java.util.Map;
 public class DialogoUsuario extends DialogFragment {
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    //CollectionReference refUsuarios = database.getReference().child("Usuarios");
     DatabaseReference refUsuarios = database.getReference("Usuarios");
 
     EditText oetRegistrarCedula, oetRegistrarClave,oetRegistrarConfirmar;
@@ -50,10 +49,7 @@ public class DialogoUsuario extends DialogFragment {
 
     Button obtnRegistrar,obtnConfirmar;
     Activity Actividad;
-    String sClaveActual="";
 
-    //ArrayList<String> alCedulas = new ArrayList<>();
-    //ArrayList<String> alClaves = new ArrayList<>();
     Map<String, Object> mapUsuarios = new HashMap<>();
 
     // TODO: Rename parameter arguments, choose names that match
@@ -141,40 +137,7 @@ public class DialogoUsuario extends DialogFragment {
 
     private void eventos() {
 
-        obtnConfirmar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String sCedula = oetCambiarCedula.getText().toString();
-                String sClaveActual = oetCambiarClaveActual.getText().toString();
-                String sClaveNueva = oetCambiarClaveNueva.getText().toString();
-                String sClaveConfirmar = oetCambiarClaveConfirmar.getText().toString();
-
-                if (sCedula.isEmpty() || sClaveActual.isEmpty() || sClaveNueva.isEmpty() || sClaveConfirmar.isEmpty()){
-                    Toast.makeText(Actividad,"Faltan datos por ingresar",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (!mapUsuarios.containsKey(sCedula)){
-                    Toast.makeText(Actividad,"Este Usuario NO EXISTE",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (!mapUsuarios.get(sCedula).equals(sClaveActual)){
-                    Toast.makeText(Actividad,"La clave de usuario NO CORRESPONDE",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (sClaveNueva.equals(sClaveConfirmar)){
-                    Toast.makeText(Actividad,"Clave nueva y Clave de confirmación diferentes",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                refUsuarios.setValue(sCedula,sClaveNueva);
-                Toast.makeText(Actividad,"Clave de Usuario creada satisfactoriamente",Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-        Map<String, Object> mapNuevoUsuario = new HashMap<>();
+         Map<String, Object> mapNuevoUsuario = new HashMap<>();
         obtnRegistrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -203,6 +166,39 @@ public class DialogoUsuario extends DialogFragment {
                     Toast.makeText(Actividad,"Clave nueva y Clave de confirmación diferentes",Toast.LENGTH_SHORT).show();
                     return;
                 }
+            }
+        });
+
+        obtnConfirmar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String sCedula = oetCambiarCedula.getText().toString();
+                String sClaveActual = oetCambiarClaveActual.getText().toString();
+                String sClaveNueva = oetCambiarClaveNueva.getText().toString();
+                String sClaveConfirmar = oetCambiarClaveConfirmar.getText().toString();
+
+                if (sCedula.isEmpty() || sClaveActual.isEmpty() || sClaveNueva.isEmpty() || sClaveConfirmar.isEmpty()){
+                    Toast.makeText(Actividad,"Faltan datos por ingresar",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (!mapUsuarios.containsKey(sCedula)){
+                    Toast.makeText(Actividad,"Este Usuario NO EXISTE",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (!mapUsuarios.get(sCedula).equals(sClaveActual)){
+                    Toast.makeText(Actividad,"La clave de usuario NO CORRESPONDE",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (!sClaveNueva.equals(sClaveConfirmar)){
+                    Toast.makeText(Actividad,"Clave nueva y Clave de confirmación diferentes",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                DatabaseReference refNuevaClave = database.getReference("Usuarios/" + sCedula);
+                refNuevaClave.setValue(sClaveNueva);
+                Toast.makeText(Actividad,"Clave de Usuario actualizada satisfactoriamente",Toast.LENGTH_SHORT).show();
+                dismiss();
             }
         });
 

@@ -3,6 +3,7 @@ package com.app.bobinas_joserobelto;
 import static android.content.ContentValues.TAG;
 import static android.graphics.Color.green;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Color;
@@ -17,14 +18,21 @@ import android.widget.Toast;
 import com.app.bobinas_joserobelto.Dialogs.DialogoConfirmacion;
 import com.app.bobinas_joserobelto.Dialogs.DialogoEstadisticas;
 import com.app.bobinas_joserobelto.Dialogs.DialogoUsuario;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity {
 
+
+    //##############################################################################################    BASES DE DATOS
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference refBobina1_OnOff = database.getReference("Bobinas/Bobina 1/On_Off");
     DatabaseReference refBobina2_OnOff = database.getReference("Bobinas/Bobina 2/On_Off");
@@ -35,16 +43,11 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference refBobina7_OnOff = database.getReference("Bobinas/Bobina 7/On_Off");
     DatabaseReference refBobina8_OnOff = database.getReference("Bobinas/Bobina 8/On_Off");
     
-    DatabaseReference refBobina1_TiempoActual = database.getReference("Bobinas/Bobina 1/Minutos Actual");
-    DatabaseReference refBobina2_TiempoActual = database.getReference("Bobinas/Bobina 2/Minutos Actual");
-    DatabaseReference refBobina3_TiempoActual = database.getReference("Bobinas/Bobina 3/Minutos Actual");
-    DatabaseReference refBobina4_TiempoActual = database.getReference("Bobinas/Bobina 4/Minutos Actual");
-    DatabaseReference refBobina5_TiempoActual = database.getReference("Bobinas/Bobina 5/Minutos Actual");
-    DatabaseReference refBobina6_TiempoActual = database.getReference("Bobinas/Bobina 6/Minutos Actual");
-    DatabaseReference refBobina7_TiempoActual = database.getReference("Bobinas/Bobina 7/Minutos Actual");
-    DatabaseReference refBobina8_TiempoActual = database.getReference("Bobinas/Bobina 8/Minutos Actual");
-    
-    
+    DatabaseReference refTiempoRestante = database.getReference("/TiempoRestante");
+    DatabaseReference refEstadoGeneral = database.getReference("/EstadoGeneral");
+
+    //##############################################################################################    FRONT END
+
     Button obtnEnviarOrden, obtnUsuario;
     RadioButton orbOpcion_0,orbOpcion_1,orbOpcion_2,orbOpcion_3,orbOpcion_4,orbOpcion_5,orbOpcion_6,
                 orbOpcion_7,orbOpcion_8;
@@ -54,10 +57,14 @@ public class MainActivity extends AppCompatActivity {
     boolean[] abBobinasOnOff = new boolean[8];
     boolean value;
 
+    //##############################################################################################    ON CREATE
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+    //#########################################################################################     Realaciónes FrontEnd
 
         obtnUsuario = (Button) findViewById(R.id.btnUsuario);
         obtnEnviarOrden = (Button) findViewById(R.id.btnEnviarOrden);
@@ -71,6 +78,58 @@ public class MainActivity extends AppCompatActivity {
         orbOpcion_6 = (RadioButton) findViewById(R.id.rbOpcion_6);
         orbOpcion_7 = (RadioButton) findViewById(R.id.rbOpcion_7);
         orbOpcion_8 = (RadioButton) findViewById(R.id.rbOpcion_8);
+
+        //###################################################################################       Lecturas iniciales
+
+        refTiempoRestante.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+                    int iTiempoRestante = Integer.parseInt(task.getResult().getValue().toString());
+                    int iMinutosRestantes = (iTiempoRestante/60);
+                    int iSegundosRestantes = iTiempoRestante - (iMinutosRestantes * 60);
+                    String myTime;
+                    if (iSegundosRestantes<10){
+                        myTime =  iMinutosRestantes + ":0" + iSegundosRestantes;
+                    }
+                    else{
+                        myTime =  iMinutosRestantes + ":" + iSegundosRestantes;
+                    }
+                    otvTiempoActual.setText("Quedan " + myTime + " minutos");
+                }
+            }
+        });
+
+        refEstadoGeneral.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+                    iEstadoGeneral = Integer.parseInt(task.getResult().getValue().toString());
+                    fnFondoOpciones(iEstadoGeneral,true);
+                    switch (iEstadoGeneral){
+                        case 0: orbOpcion_0.toggle();break;
+                        case 1: orbOpcion_1.toggle();break;
+                        case 2: orbOpcion_2.toggle();break;
+                        case 3: orbOpcion_3.toggle();break;
+                        case 4: orbOpcion_4.toggle();break;
+                        case 5: orbOpcion_5.toggle();break;
+                        case 6: orbOpcion_6.toggle();break;
+                        case 7: orbOpcion_7.toggle();break;
+                        case 8: orbOpcion_8.toggle();break;
+                    }
+                }
+            }
+        });
+
+
+
+        //###################################################################################       ACCIONES DE BOTONES
 
         obtnEnviarOrden.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,86 +251,29 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //########################################################################################## Lectura de Datos de accionamiento
-        refBobina1_TiempoActual.addValueEventListener(new ValueEventListener() {
+        refTiempoRestante.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(iEstadoGeneral==1)fnTiempoActual(dataSnapshot.getValue(int.class));
+                if(iEstadoGeneral>0){
+                    int iTiempoRestante = dataSnapshot.getValue(int.class);
+                    int iMinutosRestantes = (iTiempoRestante/60);
+                    int iSegundosRestantes = iTiempoRestante - (iMinutosRestantes * 60);
+                    String myTime;
+                    if (iSegundosRestantes<10){
+                        myTime =  iMinutosRestantes + ":0" + iSegundosRestantes;
+                    }
+                    else{
+                        myTime =  iMinutosRestantes + ":" + iSegundosRestantes;
+                    }
+                    otvTiempoActual.setText("Quedan " + myTime + " minutos");
+                }
             }
             @Override
             public void onCancelled(DatabaseError error) {
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
-        refBobina2_TiempoActual.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(iEstadoGeneral==2)fnTiempoActual(dataSnapshot.getValue(int.class));
-            }
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-        refBobina3_TiempoActual.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(iEstadoGeneral==3)fnTiempoActual(dataSnapshot.getValue(int.class));
-            }
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-        refBobina4_TiempoActual.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(iEstadoGeneral==4)fnTiempoActual(dataSnapshot.getValue(int.class));
-            }
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-        refBobina5_TiempoActual.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(iEstadoGeneral==5)fnTiempoActual(dataSnapshot.getValue(int.class));
-            }
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-        refBobina6_TiempoActual.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(iEstadoGeneral==6)fnTiempoActual(dataSnapshot.getValue(int.class));
-            }
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-        refBobina7_TiempoActual.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(iEstadoGeneral==7)fnTiempoActual(dataSnapshot.getValue(int.class));
-            }
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-        refBobina8_TiempoActual.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(iEstadoGeneral==8)fnTiempoActual(dataSnapshot.getValue(int.class));
-            }
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
+
 
 
     }
@@ -315,7 +317,4 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    void fnTiempoActual(int iTiempo){
-        otvTiempoActual.setText("Quedan " + iTiempo + " minutos");
-    }
 }

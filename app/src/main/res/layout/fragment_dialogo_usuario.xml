@@ -23,7 +23,8 @@
         <EditText
             android:id="@+id/etRegirtrarCedula"
             style="@style/styClavesUsuario"
-            android:hint="@string/strEditTextCedulaNueva" />
+            android:hint="@string/strEditTextCedulaNueva"
+            android:inputType="number"/>
         <EditText
             android:id="@+id/etRegitrarClave"
             style="@style/styClavesUsuario"
@@ -61,7 +62,8 @@
         <EditText
             android:id="@+id/etCambiarCedula"
             style="@style/styClavesUsuario"
-            android:hint="@string/strEditTextCedula" />
+            android:hint="@string/strEditTextCedula"
+            android:inputType="number"/>
         <EditText
             android:id="@+id/etCambiarClaveActual"
             style="@style/styClavesUsuario"

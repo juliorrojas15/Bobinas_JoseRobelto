@@ -39,6 +39,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link DialogoConfirmacion#newInstance} factory method to
@@ -49,16 +52,16 @@ public class DialogoConfirmacion extends DialogFragment {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference refEstadoGeneral = database.getReference("EstadoGeneral");
     DatabaseReference refTiempoGeneral = database.getReference("TiempoGeneral");
-    DatabaseReference refClave = database.getReference("Clave");
+    DatabaseReference refUsuarios = database.getReference("Usuarios");
 
-    EditText etClaveUsuario;
+    EditText etCedula,etClaveUsuario;
     Button btnConfirmar,btnVolver;
     TextView tvFraseMinutos,tvClaveRespuesta;
     NumberPicker npkTiempo;
     Activity Actividad;
     int iEstadoGeneral;
     String sClaveActual="";
-
+    Map<String, Object> mapUsuarios = new HashMap<>();
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -107,6 +110,7 @@ public class DialogoConfirmacion extends DialogFragment {
 
         iEstadoGeneral = Integer.valueOf(getArguments().getString("iEstadoGeneral"));
 
+        etCedula = view.findViewById(R.id.etCedula);
         etClaveUsuario = view.findViewById(R.id.etClaveUsuario);
         tvClaveRespuesta = view.findViewById(R.id.tvClaveRespuesta);
         btnConfirmar = view.findViewById(R.id.btnConfirmar);
@@ -114,20 +118,27 @@ public class DialogoConfirmacion extends DialogFragment {
         npkTiempo = view.findViewById(R.id.npkTiempo);
         tvFraseMinutos = view.findViewById(R.id.tvFraseMinutos);
 
-        etClaveUsuario.requestFocus();
+        etCedula.requestFocus();
 
-        refClave.addValueEventListener(new ValueEventListener() {
+        refUsuarios.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                sClaveActual = dataSnapshot.getValue(String.class);
-                btnConfirmar.setVisibility(View.INVISIBLE);
-                tvClaveRespuesta.setText("Clave INCORRECTA");
-                tvClaveRespuesta.setTextColor(RED);
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()){
+                    int i = 0;
+                    for(DataSnapshot d : snapshot.getChildren()) {
+                        mapUsuarios.put(d.getKey(),d.getValue().toString());
+                        i++;
+                    }
+                    Toast.makeText(Actividad,"Datos Obtenidos",Toast.LENGTH_SHORT).show();
+                    btnConfirmar.setVisibility(View.INVISIBLE);
+                    tvClaveRespuesta.setText("Clave INCORRECTA");
+                    tvClaveRespuesta.setTextColor(RED);
+                }
             }
+
             @Override
-            public void onCancelled(DatabaseError error) {
-                Log.w(TAG, "Failed to read value.", error.toException());
-                Toast.makeText(Actividad,"No se comunicó a Internet",Toast.LENGTH_SHORT).show();
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
 
@@ -174,6 +185,36 @@ public class DialogoConfirmacion extends DialogFragment {
             }
         });
 
+        etCedula.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+                if(mapUsuarios.containsKey(editable.toString()) &&
+                        mapUsuarios.get(editable.toString()).equals(etClaveUsuario.getText().toString())){
+                    btnConfirmar.setVisibility(View.VISIBLE);
+                    tvClaveRespuesta.setText("Usuario CORRECTO");
+                    tvClaveRespuesta.setTextColor(GREEN);
+                }
+                else{
+                    btnConfirmar.setVisibility(View.INVISIBLE);
+                    tvClaveRespuesta.setText("Clave y/o usuario INCORRECTOS");
+                    tvClaveRespuesta.setTextColor(RED);
+                }
+            }
+        });
+
+
         etClaveUsuario.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -188,15 +229,15 @@ public class DialogoConfirmacion extends DialogFragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                String sClaveActualIngresada = editable.toString();
-                if(sClaveActual.equals(sClaveActualIngresada)){
+
+                if(editable.toString().equals(mapUsuarios.get(etCedula.getText().toString()))){
                     btnConfirmar.setVisibility(View.VISIBLE);
-                    tvClaveRespuesta.setText("Clave CORRECTA");
+                    tvClaveRespuesta.setText("Usuario CORRECTO");
                     tvClaveRespuesta.setTextColor(GREEN);
                 }
                 else{
                     btnConfirmar.setVisibility(View.INVISIBLE);
-                    tvClaveRespuesta.setText("Clave INCORRECTA");
+                    tvClaveRespuesta.setText("Clave y/o usuario INCORRECTOS");
                     tvClaveRespuesta.setTextColor(RED);
                 }
             }

@@ -15,26 +15,22 @@
         android:gravity="center"
         android:layout_margin="20dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/strTituloClaveUsuario"
-            android:textSize="20dp"
-            android:textAlignment="center"
+        <EditText
+            android:id="@+id/etCedula"
+            style="@style/styClavesUsuario"
+            android:hint="@string/strEditTextCedula"
+            android:inputType="number"
+            android:textColorHint="@color/green"
             android:textColor="@color/black"
-            android:layout_margin="10dp"
-            android:layout_marginBottom="30dp"
-            android:imeOptions="actionDone"/>
-
+            android:backgroundTint="@color/black"/>
         <EditText
             android:id="@+id/etClaveUsuario"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:textAlignment="center"
+            style="@style/styClavesUsuario"
+            android:hint="@string/strEditTextClave"
+            android:inputType="textPassword"
+            android:textColorHint="@color/green"
             android:textColor="@color/black"
-            android:layout_margin="5dp"
-            android:inputType="textPassword"/>
+            android:backgroundTint="@color/black"/>
 
         <TextView
             android:id="@+id/tvClaveRespuesta"
